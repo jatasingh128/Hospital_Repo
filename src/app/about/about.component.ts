@@ -7,6 +7,7 @@ import { DataService } from '../data.service';
   styleUrls: ['./about.component.scss']
 })
 export class AboutComponent implements OnInit {
+  //comment
   constructor(private dataService: DataService) { }
   ngOnInit() {
     this.dataService.updateActiveItem('about');
