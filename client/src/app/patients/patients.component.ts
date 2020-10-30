@@ -6,6 +6,8 @@ import { Button } from '@syncfusion/ej2-angular-buttons';
 import { EditService, PageService, EditSettingsModel, GridComponent, DialogEditEventArgs } from '@syncfusion/ej2-angular-grids';
 import { AddEditPatientComponent } from '../add-edit-patient/add-edit-patient.component';
 import { DataService } from '../data.service';
+import { AddEditPatientService } from '../add-edit-patient/add-edit-patient.component.service'
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-patients',
@@ -19,8 +21,11 @@ export class PatientsComponent implements OnInit {
   @ViewChild('addEditPatientObj') addEditPatientObj: AddEditPatientComponent;
   @ViewChild('deleteConfirmationDialogObj')
   public deleteConfirmationDialogObj: DialogComponent;
-  public patientsData: { [key: string]: Object }[];
-  public filteredPatients: { [key: string]: Object }[];
+  // public patientsData: { [key: string]: Object }[];
+  // public filteredPatients: { [key: string]: Object }[];
+  public patientsData: any;
+  public filteredPatients: any;
+
   public activePatientData: { [key: string]: Object; };
   public hospitalData: { [key: string]: Object }[];
   public doctorsData: { [key: string]: Object }[];
@@ -29,11 +34,9 @@ export class PatientsComponent implements OnInit {
   public gridDialog: Dialog;
   public animationSettings: Object = { effect: 'None' };
 
-  constructor(public dataService: DataService) {
-    this.patientsData = this.filteredPatients = this.dataService.getPatientsData();
+  constructor(public dataService: DataService, private patientService: AddEditPatientService) {
     this.hospitalData = this.dataService.getHospitalData();
     this.doctorsData = this.dataService.getDoctorsData();
-    this.activePatientData = this.filteredPatients[0];
     this.editSettings = {
       allowEditing: true,
       allowAdding: true,
@@ -44,6 +47,16 @@ export class PatientsComponent implements OnInit {
 
   ngOnInit() {
     this.dataService.updateActiveItem('patients');
+    this.getPatientData();
+  }
+
+  getPatientData(){
+    this.patientService.getPatientsData().subscribe((response) => {
+      this.patientsData = this.filteredPatients = response;
+      this.activePatientData = this.filteredPatients[0];
+    }, (error) => {
+      console.log('patient api error is ', error)
+    });
   }
 
   onPatientClick(args: MouseEvent) {
@@ -63,8 +76,9 @@ export class PatientsComponent implements OnInit {
       const fields: Array<string> = ['Id', 'Name', 'Gender', 'DOB', 'BloodGroup', 'Mobile', 'Email', 'Symptoms'];
       fields.forEach(field => {
         let value: string;
+       
         if (field === 'DOB' && !isNullOrUndefined(this.activePatientData[field])) {
-          value = this.intl.formatDate(<Date>this.activePatientData[field], { skeleton: 'yMd' }).toString();
+          value=moment(this.activePatientData[field].toString()).utc().format("DD MMM YYYY").toString()
         } else {
           value = isNullOrUndefined(this.activePatientData[field]) ? '' : this.activePatientData[field].toString();
         }
@@ -124,6 +138,7 @@ export class PatientsComponent implements OnInit {
       item.PatientId === this.activePatientData.Id);
     const historyElement: HTMLElement = createElement('div', { id: 'history-wrapper' });
     if (filteredData.length > 0) {
+      console.log("hisssssss")
       filteredData.map((item: { [key: string]: Object; }) => {
         const element: Element = createElement('div', { className: 'history-content' });
         // tslint:disable-next-line:max-line-length
@@ -167,7 +182,7 @@ export class PatientsComponent implements OnInit {
   }
 
   gridRefresh() {
-    this.patientsData = this.dataService.getPatientsData();
+    this.patientsData = this.getPatientData();;
     this.filteredPatients = this.patientsData;
     this.gridObj.refresh();
   }

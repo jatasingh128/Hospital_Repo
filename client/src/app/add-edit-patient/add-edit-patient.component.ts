@@ -6,6 +6,7 @@ import { EJ2Instance } from '@syncfusion/ej2-angular-schedule';
 import { DatePicker } from '@syncfusion/ej2-angular-calendars';
 import { FormValidator, MaskedTextBoxComponent } from '@syncfusion/ej2-angular-inputs';
 import { DataService } from '../data.service';
+import { AddEditPatientService } from './add-edit-patient.component.service'
 
 @Component({
   selector: 'app-add-edit-patient',
@@ -24,14 +25,22 @@ export class AddEditPatientComponent {
   public dialogState: string;
   public bloodGroupData: Object[];
   public fields: Object = { text: 'Text', value: 'Value' };
-  public patientsData: { [key: string]: Object }[];
+  // public patientsData: { [key: string]: Object }[];
   public activePatientData: { [key: string]: Object; };
   public hospitalData: { [key: string]: Object }[];
   public doctorsData: { [key: string]: Object }[];
-
-  constructor(private dataService: DataService) {
+  public patientsData: any;
+  constructor(private dataService: DataService, private patientService: AddEditPatientService) {
     this.bloodGroupData = this.dataService.bloodGroupData;
-    this.patientsData = this.dataService.getPatientsData();
+    // this.patientsData = this.dataService.getPatientsData();
+    // this.patientsData = this.patientService.getPatientsData();
+    this.patientService.getPatientsData().subscribe((response) => {
+      console.log("subscribe--------", response);
+      this.patientsData = response;
+      //this.productData=this.rowDataProduct
+    }, (error) => {
+      console.log('error is ', error)
+    });
     this.hospitalData = this.dataService.getHospitalData();
     this.doctorsData = this.dataService.getDoctorsData();
     this.activePatientData = this.dataService.getActivePatientData();
@@ -46,6 +55,15 @@ export class AddEditPatientComponent {
   onCancelClick() {
     this.resetFormFields();
     this.newPatientObj.hide();
+  }
+
+  addPatinet(newPatientObj) {
+    console.log("dataaaaaaa", newPatientObj)
+    this.patientService.addPatientData(newPatientObj).subscribe(response => {
+      console.log("Response is", response);
+    }, (error) => {
+      console.log('error is ', error)
+    })
   }
 
   onSaveClick() {
@@ -75,11 +93,11 @@ export class AddEditPatientComponent {
         }
       }
     }
-    this.patientsData = this.dataService.getPatientsData();
+    // vvvvvvvvvv this.patientsData = this.dataService.getPatientsData();
     if (this.dialogState === 'new') {
-      obj['Id'] = Math.max.apply(Math, this.patientsData.map((data: { [key: string]: Object }) => data.Id)) + 1;
+      obj['Id'] = Math.max.apply(Math, this.patientsData.map((data) => data.Id)) + 1;
       obj['NewPatientClass'] = 'new-patient';
-      this.patientsData.push(obj);
+      this.addPatinet(obj);
     } else {
       this.activePatientData = obj;
       this.dataService.setActivePatientData(this.activePatientData);

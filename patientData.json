@@ -1,0 +1,118 @@
+/* 1 */
+{
+    "_id" : ObjectId("5f9aef514c7cb6b1aa5f74e2"),
+    "Id" : 1,
+    "Name" : "Laura",
+    "Text" : "Laura",
+    "DOB" : ISODate("1980-08-03T10:59:00.000Z"),
+    "Mobile" : "0123456789",
+    "Email" : "laura90@mail.com",
+    "Address" : "507 - 20th Ave. E.\r\nApt. 2A",
+    "Disease" : "Eye Checkup",
+    "DepartmentName" : "GENERAL",
+    "BloodGroup" : "O+",
+    "Gender" : "Female",
+    "Symptoms" : "1222222222222222222222222"
+}
+
+/* 2 */
+{
+    "_id" : ObjectId("5f9aef634c7cb6b1aa5f74e8"),
+    "Id" : 2,
+    "Name" : "Milka",
+    "Text" : "Milka",
+    "DOB" : ISODate("2000-03-05T10:59:00.000Z"),
+    "Mobile" : "(71) 555-4445",
+    "Email" : "milka40@sample.com",
+    "Address" : "908 W. Capital Way",
+    "Disease" : "Bone Fracture",
+    "DepartmentName" : "ORTHOPEDICS",
+    "BloodGroup" : "AB+",
+    "Gender" : "Female",
+    "Symptoms" : "Swelling or bruising over a bone, Pain in the injured area"
+}
+
+/* 3 */
+{
+    "_id" : ObjectId("5f9aef714c7cb6b1aa5f74ef"),
+    "Id" : 3,
+    "Name" : "Adams",
+    "Text" : "Adams",
+    "DOB" : ISODate("1985-02-03T10:59:00.000Z"),
+    "Mobile" : "(71) 555-4454",
+    "Email" : "adams89@rpy.com",
+    "Address" : "722 Moss Bay Blvd.",
+    "Disease" : "Eye and Spectactles",
+    "DepartmentName" : "GENERAL",
+    "BloodGroup" : "B+",
+    "Gender" : "Male",
+    "Symptoms" : "Frequent squinting, Eye fatigue or strain"
+}
+
+/* 4 */
+{
+    "_id" : ObjectId("5f9aef834c7cb6b1aa5f74f4"),
+    "Id" : 4,
+    "Name" : "Janet",
+    "Text" : "Janet",
+    "DOB" : ISODate("2000-07-03T10:59:00.000Z"),
+    "Mobile" : "(71) 555-4544",
+    "Email" : "janet79@rpy.com",
+    "Address" : "4110 Old Redmond Rd.",
+    "Disease" : "Biological Problem",
+    "DepartmentName" : "GENERAL",
+    "BloodGroup" : "B+",
+    "Gender" : "Male",
+    "Symptoms" : "Physical aches or pain, Memory difficulties or personality change"
+}
+
+/* 5 */
+{
+    "_id" : ObjectId("5f9aef8d4c7cb6b1aa5f74fa"),
+    "Id" : 5,
+    "Name" : "Mercy",
+    "Text" : "Mercy",
+    "DOB" : ISODate("2005-04-29T10:59:00.000Z"),
+    "Mobile" : "(71) 555-5444",
+    "Email" : "mercy60@sample.com",
+    "Address" : "14 Garrett Hill",
+    "Disease" : "Skin Hives",
+    "DepartmentName" : "DERMATOLOGY",
+    "BloodGroup" : "AB-",
+    "Gender" : "Female",
+    "Symptoms" : "Outbreak of swollen, pale red bumps or plaques"
+}
+
+/* 6 */
+{
+    "_id" : ObjectId("5f9aef9f4c7cb6b1aa5f7500"),
+    "Id" : 6,
+    "Name" : "Richa",
+    "Text" : "Richa",
+    "DOB" : ISODate("1989-10-29T10:59:00.000Z"),
+    "Mobile" : "(206) 555-4444",
+    "Email" : "richa46@mail.com",
+    "Address" : "Coventry House\r\nMiner Rd.",
+    "Disease" : "Arm Fracture",
+    "DepartmentName" : "ORTHOPEDICS",
+    "BloodGroup" : "B+",
+    "Gender" : "Female",
+    "Symptoms" : "Swelling, warmth, or redness in the joint"
+}
+
+/* 7 */
+{
+    "_id" : ObjectId("5f9aefb24c7cb6b1aa5f7507"),
+    "Id" : 7,
+    "Name" : "Maud Oliver",
+    "Text" : "MaudOliver",
+    "DOB" : ISODate("1989-10-29T10:59:00.000Z"),
+    "Mobile" : "(206) 666-4444",
+    "Email" : "moud46@rpy.com",
+    "Address" : "Coventry House\r\nMiner Rd.",
+    "Disease" : "Racing heartbeat",
+    "DepartmentName" : "CARDIOLOGY",
+    "BloodGroup" : "B+",
+    "Gender" : "Male",
+    "Symptoms" : "A fluttering in your chest"
+}
