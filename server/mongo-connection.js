@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
+const config = require('./config');
+let mongoUrl = 'mongodb://' + config.mongoServer.host + ":" + config.mongoServer.port + "/" + config.mongoServer.dbName;
 
-mongoose.connect('mongodb://localhost:27017/Appointment', {
+mongoose.connect(mongoUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });

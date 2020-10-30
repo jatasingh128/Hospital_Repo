@@ -8,8 +8,6 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', (req, res) => {
-    console.log(req.body, 'patient detailsssssssssss');
-
     const patient = new patientModel(req.body);
     patient.save().then(() => {
         res.send(patient);
