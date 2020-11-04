@@ -21,6 +21,7 @@ import { AddEditPatientComponent } from '../add-edit-patient/add-edit-patient.co
 import { AddEditDoctorComponent } from '../add-edit-doctor/add-edit-doctor.component';
 import { CalendarSettings } from '../calendar-settings';
 import { DataService } from '../data.service';
+import { AddEditPatientService } from '../add-edit-patient/add-edit-patient.component.service'
 
 L10n.load({
   'en-US': {
@@ -43,7 +44,7 @@ L10n.load({
 })
 export class CalendarComponent implements OnInit {
 
-  constructor(public dataService: DataService) {
+  constructor(public dataService: DataService,public patientService:AddEditPatientService) {
     (QuickPopups.prototype as any).applyFormValidation = () => { };
     (FieldValidator.prototype as any).errorPlacement = this.dataService.errorPlacement;
   }
@@ -81,7 +82,8 @@ export class CalendarComponent implements OnInit {
   public currentView: string;
   public doctorsData: { [key: string]: Object }[];
   public hospitalData: { [key: string]: Object }[];
-  public patientsData: { [key: string]: Object }[];
+  // public patientsData: { [key: string]: Object }[];
+  public patientsData: any;
   public activeDoctorData: Object[];
   public specialistData: { [key: string]: Object }[];
   public data: any = [];
@@ -134,7 +136,7 @@ export class CalendarComponent implements OnInit {
       resourceColorField: this.calendarSettings.bookingColor
     };
     this.dataService.updateActiveItem('calendar');
-    this.patientsData = this.dataService.getPatientsData();
+    this.getPatientData();
     this.specialistCategory = this.dataService.specialistData;
     this.activeDoctorData = [];
     this.specialistData = this.doctorsData = this.dataService.getDoctorsData();
@@ -153,6 +155,15 @@ export class CalendarComponent implements OnInit {
       this.toastWidth = '300px';
       addClass([this.dropdownObj.element], 'e-specialist-hide');
     }
+  }
+
+  getPatientData(){
+    this.patientService.getPatientsData().subscribe((response) => {
+      this.patientsData = response;
+      this.patientsData.map((x,i)=>x["Id"]=i+1)
+    }, (error) => {
+      console.log('Patient get api error is ', error)
+    });
   }
 
   onActionBegin(args: ActionEventArgs): void {
@@ -191,6 +202,7 @@ export class CalendarComponent implements OnInit {
       }
       if (args.requestType === 'eventCreate') {
         if (this.isTreeItemDropped && this.activeDoctorData.length > 0) {
+          console.log("dataaaaaaaaaaaaa",data)
           this.hospitalData.push(data);
         }
       }
@@ -243,6 +255,7 @@ export class CalendarComponent implements OnInit {
       }
     }
     if (args.requestType === 'eventCreated' || args.requestType === 'eventChanged' || args.requestType === 'eventRemoved') {
+      console.log("258----------create new appointmet for existing user",this.hospitalData);
       this.dataService.addHospitalData(this.hospitalData);
     }
   }
@@ -320,6 +333,7 @@ export class CalendarComponent implements OnInit {
   }
 
   onAddPatient() {
+    console.log("fffffffff")
     this.addEditPatientObj.onAddPatient();
   }
 
@@ -545,6 +559,7 @@ export class CalendarComponent implements OnInit {
   }
 
   onItemAdd() {
+    console.log("hhhhhhhhhh")
     if (this.selectedWaitingItem.length > 0) {
       this.selectedWaitingItem.forEach((activeItem: { [key: string]: Object }) => {
         const eventFilter: Object[] = this.eventData.filter((event: { [key: string]: Object }) => event.Id === activeItem.Id);
@@ -562,6 +577,7 @@ export class CalendarComponent implements OnInit {
           this.eventData.push(activeItem);
           this.refreshWaitingItems(activeItem['Id'] as number);
           if (this.activeDoctorData.length > 0) {
+            console.log("608----------",activeItem)
             this.hospitalData.push(activeItem);
           }
           this.dataService.addHospitalData(this.hospitalData);

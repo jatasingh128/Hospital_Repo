@@ -52,8 +52,10 @@ export class PatientsComponent implements OnInit {
 
   getPatientData(){
     this.patientService.getPatientsData().subscribe((response) => {
-      this.patientsData = this.filteredPatients = response;
-      this.activePatientData = this.filteredPatients[0];
+       this.filteredPatients = response;
+       this.filteredPatients.map((x,i)=>x["Id"]=i+1)
+       this.patientsData =this.filteredPatients;
+       this.activePatientData = this.filteredPatients[0];
     }, (error) => {
       console.log('patient api error is ', error)
     });

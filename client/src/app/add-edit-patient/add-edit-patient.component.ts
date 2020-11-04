@@ -34,16 +34,21 @@ export class AddEditPatientComponent {
     this.bloodGroupData = this.dataService.bloodGroupData;
     // this.patientsData = this.dataService.getPatientsData();
     // this.patientsData = this.patientService.getPatientsData();
-    this.patientService.getPatientsData().subscribe((response) => {
-      console.log("subscribe--------", response);
-      this.patientsData = response;
-      //this.productData=this.rowDataProduct
-    }, (error) => {
-      console.log('error is ', error)
-    });
+    this.getPatientData();
     this.hospitalData = this.dataService.getHospitalData();
     this.doctorsData = this.dataService.getDoctorsData();
     this.activePatientData = this.dataService.getActivePatientData();
+  }
+
+  getPatientData(){
+    this.patientService.getPatientsData().subscribe((response) => {
+      this.patientsData = response;
+      this.patientsData.map((x,i)=>x["Id"]=i+1);
+      this.dataService.setPatientsData(this.patientsData);
+      this.refreshEvent.emit();
+    }, (error) => {
+      console.log('Patient get api error is ', error)
+    });
   }
 
   onAddPatient() {
@@ -95,10 +100,11 @@ export class AddEditPatientComponent {
     }
     // vvvvvvvvvv this.patientsData = this.dataService.getPatientsData();
     if (this.dialogState === 'new') {
-      obj['Id'] = Math.max.apply(Math, this.patientsData.map((data) => data.Id)) + 1;
+      // obj['Id'] = Math.max.apply(Math, this.patientsData.map((data) => data.Id)) + 1;
       obj['NewPatientClass'] = 'new-patient';
       this.addPatinet(obj);
     } else {
+      console.log("old data")
       this.activePatientData = obj;
       this.dataService.setActivePatientData(this.activePatientData);
     }
@@ -110,8 +116,7 @@ export class AddEditPatientComponent {
       ActivityTime: new Date()
     };
     this.dataService.addActivityData(activityObj);
-    this.dataService.setPatientsData(this.patientsData);
-    this.refreshEvent.emit();
+    this.getPatientData();
     this.resetFormFields();
     this.newPatientObj.hide();
   }

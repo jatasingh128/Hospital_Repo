@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule, HttpInterceptor, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { APP_BASE_HREF, HashLocationStrategy, Location, LocationStrategy } from '@angular/common';
 import { AppRoutingModule } from './app-routing.module';
 import { ScheduleModule, RecurrenceEditorModule } from '@syncfusion/ej2-angular-schedule';
@@ -28,6 +29,7 @@ import { PatientsComponent } from './patients/patients.component';
 import { RecentActivityComponent } from './recent-activity/recent-activity.component';
 import { PreferenceComponent } from './preference/preference.component';
 import { MainComponent } from './main/main.component';
+// import {PatientService} from './add-edit-patient/add-edit-patient.component.service'
 
 @NgModule({
   declarations: [
@@ -70,7 +72,8 @@ import { MainComponent } from './main/main.component';
     DialogModule,
     FormsModule,
     ReactiveFormsModule,
-    ToastModule
+    ToastModule,
+    HttpClientModule
   ],
   providers: [{ provide: APP_BASE_HREF, useValue: '/' }, Location, { provide: LocationStrategy, useClass: HashLocationStrategy }],
   bootstrap: [AppComponent]
