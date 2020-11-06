@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-let activitySchema = require('../models/activity-schema');
+let Activity = require('../models/activity-schema');
 
 router.get('/', async (req, res) => {
-    const activity = await activitySchema.find();
+    const activity = await Activity.find();
     res.send(activity);
 });
 
 router.post('/', (req, res) => {
-    let activityData = new activitySchema(req.body);
+    let activityData = new Activity(req.body);
     activityData.save().then((result) => {
         res.send(result);
     }).catch((err) => {

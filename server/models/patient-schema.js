@@ -2,37 +2,37 @@
 const mongoose = require('mongoose');
 
 const patientSchema = new mongoose.Schema({
-    name: {
+    Name: {
         type: String
     },
-    text: {
+    Text: {
         type: String
     },
-    dob: {
+    DOB: {
         type: Date
     },
-    mobile: {
+    Mobile: {
         type: String
     },
-    email: {
+    Email: {
         type: String
     },
-    address: {
+    Address: {
         type: String
     },
-    disease: {
+    Disease: {
         type: String
     },
-    departmentName: {
+    DepartmentName: {
         type: String
     },
-    bloodGroup: {
+    BloodGroup: {
         type: String
     },
-    gender: {
+    Gender: {
         type: String
     },
-    symptoms: {
+    Symptoms: {
         type: String
     }
 })
