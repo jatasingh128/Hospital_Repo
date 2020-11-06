@@ -25,7 +25,6 @@ export class PatientsComponent implements OnInit {
   // public filteredPatients: { [key: string]: Object }[];
   public patientsData: any;
   public filteredPatients: any;
-
   public activePatientData: { [key: string]: Object; };
   public hospitalData: { [key: string]: Object }[];
   public doctorsData: { [key: string]: Object }[];
@@ -50,12 +49,12 @@ export class PatientsComponent implements OnInit {
     this.getPatientData();
   }
 
-  getPatientData(){
+  getPatientData() {
     this.patientService.getPatientsData().subscribe((response) => {
-       this.filteredPatients = response;
-       this.filteredPatients.map((x,i)=>x["Id"]=i+1)
-       this.patientsData =this.filteredPatients;
-       this.activePatientData = this.filteredPatients[0];
+      this.filteredPatients = response;
+      this.filteredPatients.map((x, i) => x["Id"] = i + 1)
+      this.patientsData = this.filteredPatients;
+      this.activePatientData = this.filteredPatients[0];
     }, (error) => {
       console.log('patient api error is ', error)
     });
@@ -78,9 +77,9 @@ export class PatientsComponent implements OnInit {
       const fields: Array<string> = ['Id', 'Name', 'Gender', 'DOB', 'BloodGroup', 'Mobile', 'Email', 'Symptoms'];
       fields.forEach(field => {
         let value: string;
-       
+
         if (field === 'DOB' && !isNullOrUndefined(this.activePatientData[field])) {
-          value=moment(this.activePatientData[field].toString()).utc().format("DD MMM YYYY").toString()
+          value = moment(this.activePatientData[field].toString()).utc().format("DD MMM YYYY").toString()
         } else {
           value = isNullOrUndefined(this.activePatientData[field]) ? '' : this.activePatientData[field].toString();
         }
@@ -115,11 +114,16 @@ export class PatientsComponent implements OnInit {
   }
 
   onDeleteClick() {
-    this.patientsData = this.patientsData.filter((item: { [key: string]: Object; }) => item.Id !== this.activePatientData.Id);
-    this.filteredPatients = this.patientsData;
-    this.dataService.setPatientsData(this.patientsData);
-    this.gridObj.closeEdit();
-    this.deleteConfirmationDialogObj.hide();
+    this.patientService.deletePatientData(this.activePatientData._id).subscribe((response) => {
+      // this.patientsData = this.patientsData.filter((item: { [key: string]: Object; }) => item.Id !== this.activePatientData.Id);
+      this.patientsData = this.getPatientData();
+      this.filteredPatients = this.patientsData;
+      // this.dataService.setPatientsData(this.patientsData);
+      this.gridObj.closeEdit();
+      this.deleteConfirmationDialogObj.hide();
+    }, (error) => {
+      console.log('patient delete api error is ', error)
+    })
   }
 
   onDeleteCancelClick() {

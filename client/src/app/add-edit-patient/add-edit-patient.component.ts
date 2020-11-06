@@ -40,10 +40,10 @@ export class AddEditPatientComponent {
     this.activePatientData = this.dataService.getActivePatientData();
   }
 
-  getPatientData(){
+  getPatientData() {
     this.patientService.getPatientsData().subscribe((response) => {
       this.patientsData = response;
-      this.patientsData.map((x,i)=>x["Id"]=i+1);
+      this.patientsData.map((x, i) => x["Id"] = i + 1);
       this.dataService.setPatientsData(this.patientsData);
       this.refreshEvent.emit();
     }, (error) => {
@@ -63,7 +63,6 @@ export class AddEditPatientComponent {
   }
 
   addPatinet(newPatientObj) {
-    console.log("dataaaaaaa", newPatientObj)
     this.patientService.addPatientData(newPatientObj).subscribe(response => {
       console.log("Response is", response);
     }, (error) => {
@@ -104,9 +103,13 @@ export class AddEditPatientComponent {
       obj['NewPatientClass'] = 'new-patient';
       this.addPatinet(obj);
     } else {
-      console.log("old data")
       this.activePatientData = obj;
-      this.dataService.setActivePatientData(this.activePatientData);
+      this.patientService.editPatientData(this.activePatientData).subscribe(response => {
+        console.log("Response is", response);
+        this.dataService.setActivePatientData(this.activePatientData);
+      }, (error) => {
+        console.log('error is ', error)
+      });
     }
     const activityObj: { [key: string]: Object } = {
       Name: this.dialogState === 'new' ? 'Added New Patient' : 'Updated Patient',
