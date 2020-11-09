@@ -55,6 +55,15 @@
           <ejs-dropdownlist id="DutyTiming" cssClass='e-field' width='100%' placeholder='Duty Timing' index=0
             floatLabelType='Always' [dataSource]='dutyTimingsData' [fields]='fields'></ejs-dropdownlist>
         </div>
+        <br>
+        <!-- <br> -->
+        <label style="font-weight: bold;">Doctor Image</label>
+        <iframe width="0" height="0" border="0" name="dummyframe" id="dummyframe"></iframe>
+        <form #form action="http://localhost:3000/api/doctor/profile/images" enctype="multipart/form-data" method="POST"
+        target="dummyframe">
+          <input type="file" name="myFile" id="myFile"  [(ngModel)]='doctorImage' required multiple />
+          <input type="submit" (click)="form.submit()" value="Upload" />
+        </form>
       </form>
     </ng-template>
     <ng-template #footerTemplate>

@@ -29,6 +29,7 @@ export class AddEditDoctorComponent {
   public fields: Object = { text: 'Text', value: 'Id' };
   public experienceData: Object[] = experienceData;
   public dutyTimingsData: Object[] = dutyTimingsData;
+  public doctorImage:any;
 
   constructor(private dataService: DataService) {
     this.doctorsData = this.dataService.getDoctorsData();
@@ -81,6 +82,11 @@ export class AddEditDoctorComponent {
       obj['AvailableDays'] = initialData['AvailableDays'];
       obj['WorkDays'] = initialData['WorkDays'];
       obj = this.updateWorkHours(obj);
+      
+      var imgName=this.doctorImage;
+      var lastIndex=imgName.lastIndexOf("\\");
+      obj['doctorImage']=imgName.substr(lastIndex+1,imgName.length);
+      console.log("doccccccccccc",obj)
       this.doctorsData.push(obj);
       this.dataService.setDoctorsData(this.doctorsData);
     } else {
