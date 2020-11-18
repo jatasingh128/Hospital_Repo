@@ -1,21 +1,39 @@
 const express = require('express');
 const router = express.Router();
-let Doctor = require('../models/doctor-schema');
+const Doctor = require('../models/doctor-schema');
+const workdayServer = require('./work-day');
+let WorkDay = require('../models/workDays-schema');
 const multer = require('multer');
 
+
 router.get('/', async (req, res) => {
-    const doctors = await Doctor.find();
-    await doctors.populate('workDays').execPopulate();
+    const doctors = await Doctor.find().populate('WorkDays').lean().exec();
     res.send(doctors);
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     let data = new Doctor(req.body);
-    data.save().then((result) => {
+
+    let result = await data.save();
+    let workData = req.body.WorkDays;
+    workData.map(e => {
+        e['doctorId'] = result._id;
+        return e;
+    });
+    await WorkDay.insertMany(workData);
+    try {
         res.send(result);
-    }).catch((err) => {
-        res.status(400).send(err);
-    })
+    }
+    catch (e) {
+        res.status(400).send(e);
+    }
+    // data.save().then((result) => {
+    //     workdays.save().then(() => {
+    //         res.send(result);
+    //     })
+    // }).catch((err) => {
+    //     res.status(400).send(err);
+    // })
 });
 
 router.put('/:id', async (req, res) => {

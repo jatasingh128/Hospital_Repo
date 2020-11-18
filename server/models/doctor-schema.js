@@ -18,7 +18,7 @@ const doctorSchema = new mongoose.Schema({
     },
     Color: {
         type: String,
-        required: true,
+        // required: true,
     },
     Education: {
         type: String,
@@ -67,14 +67,21 @@ const doctorSchema = new mongoose.Schema({
     AvailableDays: {
         type: Array,
         required: true
+    },
+    doctorImage:{
+        type: String,
+        required: true
     }
 });
 
-doctorSchema.virtual('workDays', {
+doctorSchema.virtual('WorkDays', {
     ref: 'WorkDay',
     localField: '_id',
     foreignField: 'doctorId'
-})
+});
+
+doctorSchema.set('toObject', { virtuals: true });
+// doctorSchema.set('toJSON', { virtuals: true });
 
 const Doctor = mongoose.model('Doctor', doctorSchema, 'doctors');
 

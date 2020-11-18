@@ -4,6 +4,7 @@ import { DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
 import { AddEditDoctorComponent } from '../add-edit-doctor/add-edit-doctor.component';
 import { DataService } from '../data.service';
 import { Tooltip, TooltipEventArgs } from '@syncfusion/ej2-angular-popups';
+import { AddEditDoctorService } from '../add-edit-doctor/add-edit-doctor.service';
 
 @Component({
   selector: 'app-doctors',
@@ -26,9 +27,9 @@ export class DoctorsComponent implements OnInit {
   public selectedDepartmentId: string;
   public tooltipObj: Tooltip;
 
-  constructor(public dataService: DataService, private router: Router) {
-    this.doctorsData = this.filteredDoctors = this.dataService.getDoctorsData();
-    this.activeDoctorData = this.doctorsData[0];
+  constructor(public dataService: DataService, private router: Router, public doctorService: AddEditDoctorService) {
+    // this.doctorsData = this.filteredDoctors = this.dataService.getDoctorsData();
+    this.getDoctorData();
     this.specializationData = this.dataService.specialistData;
   }
 
@@ -51,6 +52,15 @@ export class DoctorsComponent implements OnInit {
 
   getColor(args: { [key: string]: string }) {
     return args.Color;
+  }
+
+  getDoctorData() {
+    return this.doctorService.getDoctorsData().subscribe((result: any) => {
+      this.doctorsData = this.filteredDoctors = result;
+      this.activeDoctorData = this.doctorsData[0];
+    }, (error) => {
+      console.log(error);
+    })
   }
 
   onSpecializationChange(args?: any) {

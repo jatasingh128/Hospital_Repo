@@ -6,6 +6,7 @@ import { DialogComponent, BeforeOpenEventArgs } from '@syncfusion/ej2-angular-po
 import { DropDownList, DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
 import { specializationData, experienceData, dutyTimingsData } from '../datasource';
 import { DataService } from '../data.service';
+import { AddEditDoctorService } from './add-edit-doctor.service'
 
 @Component({
   selector: 'app-add-edit-doctor',
@@ -29,11 +30,12 @@ export class AddEditDoctorComponent {
   public fields: Object = { text: 'Text', value: 'Id' };
   public experienceData: Object[] = experienceData;
   public dutyTimingsData: Object[] = dutyTimingsData;
-  public doctorImage:any;
+  public doctorImage: any;
 
-  constructor(private dataService: DataService) {
-    this.doctorsData = this.dataService.getDoctorsData();
-    this.activeDoctorData = this.dataService.getActiveDoctorData();
+  constructor(private dataService: DataService, public doctorService: AddEditDoctorService) {
+    // this.doctorsData = this.dataService.getDoctorsData();
+    // this.activeDoctorData = this.dataService.getActiveDoctorData();
+    this.getDoctorData();    
   }
 
   onAddDoctor() {
@@ -45,6 +47,18 @@ export class AddEditDoctorComponent {
   onCancelClick() {
     this.resetFormFields();
     this.newDoctorObj.hide();
+  }
+
+  getDoctorData() {
+    return this.doctorService.getDoctorsData().subscribe((result: any) => {
+      this.doctorsData = result;
+      console.log(this.doctorsData,'doctorrrrrrrrrrrrrrrr')
+
+      this.activeDoctorData = this.doctorsData[0];
+      // return result;
+    }, (error) => {
+      console.log(error);
+    })
   }
 
   onSaveClick() {
@@ -81,14 +95,16 @@ export class AddEditDoctorComponent {
       const initialData: { [key: string]: Object; } = JSON.parse(JSON.stringify(this.doctorsData[0]));
       obj['AvailableDays'] = initialData['AvailableDays'];
       obj['WorkDays'] = initialData['WorkDays'];
+      var imgName = this.doctorImage;
+      var lastIndex = imgName.lastIndexOf("\\");
+      obj['doctorImage'] = imgName.substr(lastIndex + 1, imgName.length);
       obj = this.updateWorkHours(obj);
-      
-      var imgName=this.doctorImage;
-      var lastIndex=imgName.lastIndexOf("\\");
-      obj['doctorImage']=imgName.substr(lastIndex+1,imgName.length);
-      console.log("doccccccccccc",obj)
-      this.doctorsData.push(obj);
-      this.dataService.setDoctorsData(this.doctorsData);
+      this.doctorService.addDoctorData(obj).subscribe((response: any) => {
+        this.doctorsData.push(response);
+        this.dataService.setDoctorsData(this.doctorsData);
+      }, (error) => {
+        console.log(error, 'error')
+      })
     } else {
       this.activeDoctorData = this.updateWorkHours(obj);
       this.dataService.setActiveDoctorData(this.activeDoctorData);

@@ -6,6 +6,8 @@ import { TimePicker } from '@syncfusion/ej2-angular-calendars';
 import { EJ2Instance } from '@syncfusion/ej2-angular-schedule';
 import { AddEditDoctorComponent } from '../add-edit-doctor/add-edit-doctor.component';
 import { DataService } from '../data.service';
+import { AddEditDoctorService } from '../add-edit-doctor/add-edit-doctor.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-doctor-details',
@@ -21,28 +23,52 @@ export class DoctorDetailsComponent implements OnInit {
   @ViewChild('deleteConfirmationDialogObj')
   public deleteConfirmationDialogObj: DialogComponent;
   public activeData: { [key: string]: Object };
-  public doctorData: { [key: string]: Object }[];
+  public doctorData: any;
   public intl: Internationalization = new Internationalization();
   public specializationData: Object[];
   public animationSettings: Object = { effect: 'None' };
   public breakDays: Object;
-  public doctorId: number;
+  // public doctorId: number;
+  public doctorId: string;
 
-  constructor(public dataService: DataService, public router: Router, private route: ActivatedRoute,) {
-    this.doctorData = this.dataService.getDoctorsData();
+  constructor(public dataService: DataService, public router: Router, private route: ActivatedRoute, public doctorService: AddEditDoctorService) {
+    // this.doctorData = this.dataService.getDoctorsData();
+    this.getDoctorData();
     this.specializationData = this.dataService.specialistData;
   }
 
+  getDoctorData() {
+    this.doctorService.getDoctorsData().subscribe((response) => {
+      console.log(response, 'responseeeeeeeeeeeee')
+      this.doctorData = response;
+      this.activeData = this.doctorData.filter(item => item._id === this.doctorId)[0];
+    }, (err) => {
+      console.log(err);
+    })
+  }
+
   ngOnInit() {
-    this.dataService.updateActiveItem('doctors');
-    this.route.params.subscribe((params: any) => this.doctorId = parseInt(params.id, 10));
-    this.doctorData = this.dataService.getDoctorsData();
-    this.activeData = this.doctorData.filter(item => item.Id === this.doctorId)[0];
-    const isDataDiffer: boolean = JSON.stringify(this.activeData) === JSON.stringify(this.dataService.getActiveDoctorData());
-    if (!isDataDiffer) {
-      this.dataService.setActiveDoctorData(this.activeData);
-    }
-    this.breakDays = JSON.parse(JSON.stringify(this.activeData.WorkDays));
+    this.doctorService.getDoctorsData().subscribe((response) => {
+      console.log(response, 'responseeeeeeeeeeeee')
+      this.dataService.updateActiveItem('doctors');
+
+      this.doctorData = response;
+      this.route.params.subscribe((params: any) => this.doctorId = params.id);
+      this.activeData = this.doctorData.filter(item => item._id === this.doctorId)[0];
+      console.log(this.doctorData, 'doctorrrrrrrrrrrrrrr')
+      console.log(this.activeData, 'activeeeeeeeeeeeee')
+      const isDataDiffer: boolean = JSON.stringify(this.activeData) === JSON.stringify(this.dataService.getActiveDoctorData());
+      if (!isDataDiffer) {
+        this.dataService.setActiveDoctorData(this.activeData);
+      }
+      this.breakDays = JSON.parse(JSON.stringify(this.activeData.WorkDays));
+    }, (err) => {
+      console.log(err);
+    })
+
+    // this.getDoctorData();
+
+
   }
 
   onBackIconClick() {
@@ -147,14 +173,38 @@ export class DoctorDetailsComponent implements OnInit {
     }
   }
 
+  timeDifference(startTime: any, endTime: any) {
+    var start = moment(startTime).format("hh:mm A");
+    var end = moment(endTime).format("hh:mm A");
+
+    // account for crossing over to midnight the next day
+    // if (end.isBefore(start)) end.add(1, 'day');
+
+    // calculate the duration
+    // var d = moment.duration(end.diff(start));
+
+    // subtract the lunch break
+    // d.subtract(30, 'minutes');
+
+    // format a string result
+    // var s = moment.utc(+d).format('H:mm');
+    var s = '' + start + ' - ' + end;
+    return s
+  }
+
   getBreakDetails(data: any) {
+    console.log(data, 'timeeeeeeeeeeeeeeeee')
     if (data.State === 'TimeOff') {
       return 'TIME OFF';
     } else if (data.State === 'RemoveBreak') {
       return '---';
     } else {
+
+      let val = this.timeDifference(data.BreakStartHour, data.BreakEndHour);
+      console.log(val, 'valllllllllllllllllllllll')
+      return val;
       // tslint:disable-next-line:max-line-length
-      return `${this.intl.formatDate(data.BreakStartHour, { skeleton: 'hm' })} - ${this.intl.formatDate(data.BreakEndHour, { skeleton: 'hm' })}`;
+      // return `${this.intl.formatDate(data.BreakStartHour, { skeleton: 'hm' })} - ${this.intl.formatDate(data.BreakEndHour, { skeleton: 'hm' })}`;
     }
   }
 
@@ -162,8 +212,11 @@ export class DoctorDetailsComponent implements OnInit {
     const workDays: { [key: string]: Object }[] = <{ [key: string]: Object }[]>data.WorkDays;
     const filteredData: { [key: string]: Object }[] = workDays.filter((item: any) => item.Enable !== false);
     const result = filteredData.map(item => (<string>item.Day).slice(0, 3).toLocaleUpperCase()).join(',');
+    let val = this.timeDifference(filteredData[0].WorkStartHour, filteredData[0].WorkEndHour);
+    console.log(val, 'valllllllllllllllllllllll')
+    return `${result} - ${val}`;
     // tslint:disable-next-line:max-line-length
-    return `${result} - ${this.intl.formatDate(new Date(<Date>filteredData[0].WorkStartHour), { skeleton: 'hm' })} - ${this.intl.formatDate(new Date(<Date>filteredData[0].WorkEndHour), { skeleton: 'hm' })}`;
+    // return `${result} - ${this.intl.formatDate(new Date(<Date>filteredData[0].WorkStartHour), { skeleton: 'hm' })} - ${this.intl.formatDate(new Date(<Date>filteredData[0].WorkEndHour), { skeleton: 'hm' })}`;
   }
 
   getSpecializationText(text: Object) {

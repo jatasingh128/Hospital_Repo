@@ -10,7 +10,6 @@ export class AddEditPatientService {
   private _patientUrl = 'http://localhost:3000/api/patient';
 
   getPatientsData() {
-    console.log("get api")
     return this.http.get(this._patientUrl)
   }
 

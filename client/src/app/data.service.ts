@@ -7,6 +7,7 @@ import { EventFieldsMapping } from '@syncfusion/ej2-schedule';
 import { CalendarSettings } from './calendar-settings';
 import { FormValidator, FormValidatorModel } from '@syncfusion/ej2-angular-inputs';
 import { createElement, remove, removeClass } from '@syncfusion/ej2-base';
+import { AddEditDoctorService } from './add-edit-doctor/add-edit-doctor.service'
 
 @Injectable({
   providedIn: 'root'
@@ -28,9 +29,10 @@ export class DataService {
   public shift2BlockEvents: { [key: string]: Object }[] = shift2BlockData;
   public shift3BlockEvents: { [key: string]: Object }[] = shift3BlockData;
 
-  constructor() {
+  constructor(public doctorService: AddEditDoctorService) {
     this.patientsData = patientsData as { [key: string]: Object }[];
     this.doctorsData = doctorsData as { [key: string]: Object }[];
+    // this.getDoctorData();
     this.calendarSettings = {
       bookingColor: 'Doctors',
       calendar: {
@@ -48,6 +50,16 @@ export class DataService {
     this.activityData = <{ [key: string]: Object }[]>activityData;
     this.hospitalData = <{ [key: string]: Object }[]>hospitalData;
   }
+
+  // getDoctorData() {
+  //   return this.doctorService.getDoctorsData().subscribe((result: any) => {
+  //     this.doctorsData = result;
+  //     this.activeDoctorData = this.doctorsData[0];
+  //     // return result;
+  //   }, (error) => {
+  //     console.log(error);
+  //   })
+  // }
 
   onUpdateData(field: string, value: any, className: string, activeData: any) {
     if (className.indexOf('doctor') !== -1) {
