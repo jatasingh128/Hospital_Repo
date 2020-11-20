@@ -16,8 +16,16 @@ export class AddEditDoctorService {
     }
 
     addDoctorData(doctorData) {
-        console.log(doctorData,'@@@@@@@@@@@@')
+        console.log(doctorData, '@@@@@@@@@@@@')
         return this.http.post(this._doctorUrl, doctorData);
+    }
+
+    deleteDoctor(id: any) {
+        return this.http.delete<any>(this._doctorUrl + '/' + id);
+    }
+
+    editDoctorData(data: any) {
+        return this.http.put<any>(this._doctorUrl + '/' + data._id, data);
     }
 
 }

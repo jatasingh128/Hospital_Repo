@@ -19,7 +19,7 @@ export class DoctorsComponent implements OnInit {
   public specializationObj: DropDownListComponent;
   @ViewChild('specialistItemObj')
   public specialistItemObj: any;
-  public doctorsData: { [key: string]: Object }[];
+  public doctorsData: any;
   public activeDoctorData: { [key: string]: Object };
   public filteredDoctors: { [key: string]: Object }[];
   public specializationData: Object[];
@@ -57,6 +57,7 @@ export class DoctorsComponent implements OnInit {
   getDoctorData() {
     return this.doctorService.getDoctorsData().subscribe((result: any) => {
       this.doctorsData = this.filteredDoctors = result;
+      console.log(result,'*******************88')
       this.activeDoctorData = this.doctorsData[0];
     }, (error) => {
       console.log(error);
@@ -67,7 +68,7 @@ export class DoctorsComponent implements OnInit {
     let filteredData: { [key: string]: Object }[];
     if (args && args.value) {
       this.selectedDepartmentId = args ? args.itemData.DepartmentId : this.selectedDepartmentId;
-      filteredData = this.doctorsData.filter((item: any) => item.DepartmentId === this.selectedDepartmentId);
+      filteredData = this.doctorsData.filter((item: any) => item.DepartmentId == this.selectedDepartmentId);
     } else {
       this.selectedDepartmentId = null;
       filteredData = this.doctorsData;
@@ -88,7 +89,7 @@ export class DoctorsComponent implements OnInit {
   }
 
   updateDoctors() {
-    this.doctorsData = this.dataService.getDoctorsData();
+    this.doctorsData = this.getDoctorData();
     if (this.selectedDepartmentId) {
       this.filteredDoctors = this.doctorsData.filter((item: any) => item.DepartmentId === this.selectedDepartmentId);
     }

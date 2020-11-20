@@ -27,21 +27,19 @@ router.post('/', async (req, res) => {
     catch (e) {
         res.status(400).send(e);
     }
-    // data.save().then((result) => {
-    //     workdays.save().then(() => {
-    //         res.send(result);
-    //     })
-    // }).catch((err) => {
-    //     res.status(400).send(err);
-    // })
 });
 
 router.put('/:id', async (req, res) => {
     try {
         const data = await Doctor.findByIdAndUpdate(req.params.id, req.body, { runValidators: true, new: true });
+        if (req.body.WorkDays) {
+            for (let wd in req.body.WorkDays)
+                await WorkDay.update({ _id: wd._id }, wd);
+        }
         res.send(data);
     }
     catch (e) {
+        console.log(e, 'error..................')
         res.status(400).send(e);
     }
 })
@@ -49,9 +47,11 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     try {
         await Doctor.findByIdAndDelete(req.params.id);
-        res.send('Doctor deleted successfully');
+        await WorkDay.deleteMany({ doctorId: req.params.id });
+        res.send({ message: 'Doctor deleted successfully' });
     }
     catch (e) {
+        console.log(e, 'error.................');
         res.status(400).send(e);
     }
 })

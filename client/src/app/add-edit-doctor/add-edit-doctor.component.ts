@@ -35,7 +35,7 @@ export class AddEditDoctorComponent {
   constructor(private dataService: DataService, public doctorService: AddEditDoctorService) {
     // this.doctorsData = this.dataService.getDoctorsData();
     // this.activeDoctorData = this.dataService.getActiveDoctorData();
-    this.getDoctorData();    
+    this.getDoctorData();
   }
 
   onAddDoctor() {
@@ -52,7 +52,7 @@ export class AddEditDoctorComponent {
   getDoctorData() {
     return this.doctorService.getDoctorsData().subscribe((result: any) => {
       this.doctorsData = result;
-      console.log(this.doctorsData,'doctorrrrrrrrrrrrrrrr')
+      console.log(this.doctorsData, 'doctorrrrrrrrrrrrrrrr')
 
       this.activeDoctorData = this.doctorsData[0];
       // return result;
@@ -94,7 +94,78 @@ export class AddEditDoctorComponent {
       obj['NewDoctorClass'] = 'new-doctor';
       const initialData: { [key: string]: Object; } = JSON.parse(JSON.stringify(this.doctorsData[0]));
       obj['AvailableDays'] = initialData['AvailableDays'];
-      obj['WorkDays'] = initialData['WorkDays'];
+      obj['WorkDays'] = [
+        {
+          Day: 'sunday',
+          Index: 0,
+          Enable: true,
+          WorkStartHour: new Date(2020, 7, 1, 8, 0),
+          WorkEndHour: new Date(2020, 7, 1, 17, 0),
+          BreakStartHour: new Date(2020, 7, 1, 12, 0),
+          BreakEndHour: new Date(2020, 7, 1, 13, 0),
+          State: 'AddBreak',
+        },
+        {
+          Day: 'monday',
+          Index: 1,
+          Enable: false,
+          WorkStartHour: new Date(2020, 7, 2, 8, 0),
+          WorkEndHour: new Date(2020, 7, 2, 17, 0),
+          BreakStartHour: new Date(2020, 7, 2, 12, 0),
+          BreakEndHour: new Date(2020, 7, 2, 13, 0),
+          State: 'TimeOff',
+        },
+        {
+          Day: 'tuesday',
+          Index: 2,
+          Enable: true,
+          WorkStartHour: new Date(2020, 7, 3, 8, 0),
+          WorkEndHour: new Date(2020, 7, 3, 17, 0),
+          BreakStartHour: new Date(2020, 7, 3, 12, 0),
+          BreakEndHour: new Date(2020, 7, 3, 13, 0),
+          State: 'AddBreak',
+        },
+        {
+          Day: 'wednesday',
+          Index: 3,
+          Enable: true,
+          WorkStartHour: new Date(2020, 7, 4, 8, 0),
+          WorkEndHour: new Date(2020, 7, 4, 17, 0),
+          BreakStartHour: new Date(2020, 7, 4, 12, 0),
+          BreakEndHour: new Date(2020, 7, 4, 13, 0),
+          State: 'AddBreak',
+        },
+        {
+          Day: 'thursday',
+          Index: 4,
+          Enable: true,
+          WorkStartHour: new Date(2020, 7, 5, 8, 0),
+          WorkEndHour: new Date(2020, 7, 5, 17, 0),
+          BreakStartHour: new Date(2020, 7, 5, 12, 0),
+          BreakEndHour: new Date(2020, 7, 5, 13, 0),
+          State: 'AddBreak',
+        },
+        {
+          Day: 'friday',
+          Index: 5,
+          Enable: true,
+          WorkStartHour: new Date(2020, 7, 6, 8, 0),
+          WorkEndHour: new Date(2020, 7, 6, 17, 0),
+          BreakStartHour: new Date(2020, 7, 6, 12, 0),
+          BreakEndHour: new Date(2020, 7, 6, 13, 0),
+          State: 'RemoveBreak',
+        },
+        {
+          Day: 'saturday',
+          Index: 6,
+          Enable: false,
+          WorkStartHour: new Date(2020, 7, 7, 8, 0),
+          WorkEndHour: new Date(2020, 7, 7, 17, 0),
+          BreakStartHour: new Date(2020, 7, 7, 12, 0),
+          BreakEndHour: new Date(2020, 7, 7, 13, 0),
+          State: 'TimeOff'
+        }
+      ];
       var imgName = this.doctorImage;
       var lastIndex = imgName.lastIndexOf("\\");
       obj['doctorImage'] = imgName.substr(lastIndex + 1, imgName.length);
@@ -104,10 +175,17 @@ export class AddEditDoctorComponent {
         this.dataService.setDoctorsData(this.doctorsData);
       }, (error) => {
         console.log(error, 'error')
-      })
+      });
     } else {
+      console.log('Edit doctorrrrrrrrrrrrrrrr', obj)
       this.activeDoctorData = this.updateWorkHours(obj);
       this.dataService.setActiveDoctorData(this.activeDoctorData);
+      this.doctorService.editDoctorData(obj).subscribe((response: any) => {
+        this.doctorsData.push(response);
+        this.dataService.setDoctorsData(this.doctorsData);
+      }, (error) => {
+        console.log(error, 'error')
+      });
     }
     const activityObj: { [key: string]: Object } = {
       Name: this.dialogState === 'new' ? 'Added New Doctor' : 'Updated Doctor',
@@ -184,6 +262,7 @@ export class AddEditDoctorComponent {
     this.title = 'Edit Doctor';
     this.newDoctorObj.show();
     this.activeDoctorData = this.dataService.getActiveDoctorData();
+    console.log(this.activeDoctorData, 'this.activeDoctorData')
     const obj: { [key: string]: Object; } = this.activeDoctorData;
     const formelement: HTMLInputElement[] = [].slice.call(document.querySelectorAll('.new-doctor-dialog .e-field'));
     for (const curElement of formelement) {

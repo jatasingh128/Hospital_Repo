@@ -39,7 +39,6 @@ export class DoctorDetailsComponent implements OnInit {
 
   getDoctorData() {
     this.doctorService.getDoctorsData().subscribe((response) => {
-      console.log(response, 'responseeeeeeeeeeeee')
       this.doctorData = response;
       this.activeData = this.doctorData.filter(item => item._id === this.doctorId)[0];
     }, (err) => {
@@ -49,14 +48,11 @@ export class DoctorDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.doctorService.getDoctorsData().subscribe((response) => {
-      console.log(response, 'responseeeeeeeeeeeee')
       this.dataService.updateActiveItem('doctors');
 
       this.doctorData = response;
       this.route.params.subscribe((params: any) => this.doctorId = params.id);
       this.activeData = this.doctorData.filter(item => item._id === this.doctorId)[0];
-      console.log(this.doctorData, 'doctorrrrrrrrrrrrrrr')
-      console.log(this.activeData, 'activeeeeeeeeeeeee')
       const isDataDiffer: boolean = JSON.stringify(this.activeData) === JSON.stringify(this.dataService.getActiveDoctorData());
       if (!isDataDiffer) {
         this.dataService.setActiveDoctorData(this.activeData);
@@ -65,10 +61,7 @@ export class DoctorDetailsComponent implements OnInit {
     }, (err) => {
       console.log(err);
     })
-
     // this.getDoctorData();
-
-
   }
 
   onBackIconClick() {
@@ -80,13 +73,22 @@ export class DoctorDetailsComponent implements OnInit {
   }
 
   onDeleteClick() {
+    // const filteredData: { [key: string]: Object }[] = this.doctorData.filter(
+    //   (item: any) => item.Id !== parseInt(this.activeData['Id'] as string, 10));
+    console.log(this.activeData['_id'], 'activedataIddddddd', this.doctorData)
     const filteredData: { [key: string]: Object }[] = this.doctorData.filter(
-      (item: any) => item.Id !== parseInt(this.activeData['Id'] as string, 10));
-    this.doctorData = filteredData;
-    this.activeData = this.doctorData[0];
-    this.dataService.setActiveDoctorData(this.activeData);
-    this.dataService.setDoctorsData(this.doctorData);
-    this.deleteConfirmationDialogObj.hide();
+      (item: any) => item._id !== this.activeData['_id']);
+    console.log(filteredData, '************************8')
+    this.doctorService.deleteDoctor(this.doctorId).subscribe(() => {
+      this.doctorData = filteredData;
+      this.activeData = this.doctorData[0];
+      this.dataService.setActiveDoctorData(this.activeData);
+      this.dataService.setDoctorsData(this.doctorData);
+      this.deleteConfirmationDialogObj.hide();
+    }, (err) => {
+      console.log(err, 'Error occurred while deleting doctor..')
+      this.deleteConfirmationDialogObj.hide();
+    })
   }
 
   onDeleteCancelClick() {
@@ -94,6 +96,7 @@ export class DoctorDetailsComponent implements OnInit {
   }
 
   onDoctorEdit() {
+    console.log('ondoctorEditttttttttttttttt')
     this.addEditDoctorObj.showDetails();
   }
 
@@ -117,7 +120,9 @@ export class DoctorDetailsComponent implements OnInit {
   onSaveClick() {
     const formelement: HTMLInputElement[] = [].slice.call(document.querySelectorAll('.break-hour-dialog .e-field'));
     const workDays: { [key: string]: Object }[] = JSON.parse(JSON.stringify(this.breakDays));
+    console.log(workDays, 'edittttttttttttsaveeeeeeeeeeeeeee', formelement)
     for (const curElement of formelement) {
+      console.log(curElement, 'currrrrrrrrrr')
       const dayName: string = curElement.parentElement.getAttribute('id').split('_')[0];
       const valueName: string = curElement.parentElement.getAttribute('id').split('_')[1];
       const instance: TimePicker = (curElement.parentElement as EJ2Instance).ej2_instances[0] as TimePicker;
@@ -142,8 +147,14 @@ export class DoctorDetailsComponent implements OnInit {
     });
     this.activeData.AvailableDays = availableDays;
     this.activeData.WorkDays = workDays;
-    this.dataService.onUpdateData('WorkDays', workDays, 'doctor', this.activeData);
-    this.breakHourObj.hide();
+    console.log(availableDays, workDays);
+    this.doctorService.editDoctorData(this.activeData).subscribe((res) => {
+      
+      this.dataService.onUpdateData('WorkDays', workDays, 'doctor', this.activeData);
+      this.breakHourObj.hide();
+    }, (err) => {
+      console.log(err);
+    })
   }
 
   getStatus(state: string) {
@@ -193,15 +204,12 @@ export class DoctorDetailsComponent implements OnInit {
   }
 
   getBreakDetails(data: any) {
-    console.log(data, 'timeeeeeeeeeeeeeeeee')
     if (data.State === 'TimeOff') {
       return 'TIME OFF';
     } else if (data.State === 'RemoveBreak') {
       return '---';
     } else {
-
       let val = this.timeDifference(data.BreakStartHour, data.BreakEndHour);
-      console.log(val, 'valllllllllllllllllllllll')
       return val;
       // tslint:disable-next-line:max-line-length
       // return `${this.intl.formatDate(data.BreakStartHour, { skeleton: 'hm' })} - ${this.intl.formatDate(data.BreakEndHour, { skeleton: 'hm' })}`;
@@ -213,7 +221,6 @@ export class DoctorDetailsComponent implements OnInit {
     const filteredData: { [key: string]: Object }[] = workDays.filter((item: any) => item.Enable !== false);
     const result = filteredData.map(item => (<string>item.Day).slice(0, 3).toLocaleUpperCase()).join(',');
     let val = this.timeDifference(filteredData[0].WorkStartHour, filteredData[0].WorkEndHour);
-    console.log(val, 'valllllllllllllllllllllll')
     return `${result} - ${val}`;
     // tslint:disable-next-line:max-line-length
     // return `${result} - ${this.intl.formatDate(new Date(<Date>filteredData[0].WorkStartHour), { skeleton: 'hm' })} - ${this.intl.formatDate(new Date(<Date>filteredData[0].WorkEndHour), { skeleton: 'hm' })}`;
